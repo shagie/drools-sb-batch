@@ -11,10 +11,10 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.support.CompositeItemProcessor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.Arrays;
@@ -22,15 +22,20 @@ import java.util.Arrays;
 @Configuration
 @EnableBatchProcessing
 public class BatchConfiguration {
-    @Autowired
-    public JobBuilderFactory jobBuilderFactory;
+    private JobBuilderFactory jobBuilderFactory;
+    private StepBuilderFactory stepBuilderFactory;
 
-    @Autowired
-    public StepBuilderFactory stepBuilderFactory;
+    public BatchConfiguration(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+        this.jobBuilderFactory = jobBuilderFactory;
+        this.stepBuilderFactory = stepBuilderFactory;
 
-    @Autowired
-    @Qualifier("KieService")
-    public RulesService service;
+    }
+
+    @Bean("KieService")
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public RulesService getRulesService() {
+        return new RulesService();
+    }
 
     @Bean
     public FlatFileItemReader<Item> reader() {
@@ -52,7 +57,7 @@ public class BatchConfiguration {
 
     @Bean
     public ItemRuleProcessor ruleProcessor() {
-        return new ItemRuleProcessor(service);
+        return new ItemRuleProcessor(getRulesService());
     }
 
     @Bean

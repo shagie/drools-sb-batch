@@ -8,21 +8,15 @@ import org.kie.api.builder.KieModule;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.internal.io.ResourceFactory;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 @Component
 public class RulesService {
     private KieContainer kContainer;
 
-    @Bean("KieService")
-    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public RulesService getRulesService() {
-        return new RulesService();
-    }
-
+    @PostConstruct
     void initializeRules() {
         KieServices ks = KieServices.Factory.get();
         KieFileSystem kieFileSystem = ks.newKieFileSystem();
@@ -33,14 +27,10 @@ public class RulesService {
         kContainer = ks.newKieContainer(kieModule.getReleaseId());
     }
 
-    int fireRules(Item item) {
+    void fireRules(Item item) {
         KieSession kieSession = kContainer.newKieSession();
-
         kieSession.insert(item);
-
-        int rv = kieSession.fireAllRules();
-
+        kieSession.fireAllRules();
         kieSession.dispose();
-        return rv;
     }
 }

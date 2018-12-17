@@ -1,17 +1,12 @@
 package net.shagie.spring.drools.model;
 
-
 import java.io.Serializable;
-import java.util.Objects;
 
-/**
- * Example from Drools Book.
- */
 public class Item implements Serializable {
 
     public enum Category {
         NA, LOW_RANGE, MID_RANGE, HIGH_RANGE,
-        SPECIAL_MIDHIGH_RANGE //used in chapter 4
+        SPECIAL_MIDHIGH_RANGE
     };
     private static final long serialVersionUID = 1L;
 

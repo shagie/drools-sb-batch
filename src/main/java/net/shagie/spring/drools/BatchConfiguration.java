@@ -11,10 +11,8 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.support.CompositeItemProcessor;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.Arrays;
@@ -31,12 +29,6 @@ public class BatchConfiguration {
 
     }
 
-    @Bean("KieService")
-    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public RulesService getRulesService() {
-        return new RulesService();
-    }
-
     @Bean
     public FlatFileItemReader<Item> reader() {
         return new FlatFileItemReaderBuilder<Item>()
@@ -48,6 +40,11 @@ public class BatchConfiguration {
                     setTargetType(Item.class);
                 }})
                 .build();
+    }
+
+    @Bean
+    public RulesService getRulesService() {
+        return new RulesService();
     }
 
     @Bean
